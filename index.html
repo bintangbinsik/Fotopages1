@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>File Arsip Issuda XII.4 By @binsik.exe</title>
+    <title>By @binsik.exe</title>
     <style>
         :root {
             --background: #0f172a;
@@ -24,7 +24,7 @@
         
         .loading { text-align: center; padding: 30px; color: var(--text-muted); font-style: italic; font-size: 13px; }
 
-        /* Struktur Folder Super Ringan */
+        /* Struktur Folder */
         .folder-node { margin-left: 8px; margin-top: 8px; }
         
         .folder-header {
@@ -47,10 +47,10 @@
         .folder-content { display: none; padding-left: 8px; border-left: 1px dashed var(--border); margin-top: 4px; }
         .folder-node.open > .folder-content { display: block; }
 
-        /* Grid Komponen File Minim Ukuran */
+        /* Grid Komponen File */
         .file-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 Kolom di HP agar minim space */
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             margin-top: 8px;
             margin-bottom: 12px;
@@ -65,10 +65,11 @@
             flex-direction: column;
             text-decoration: none;
             color: inherit;
+            position: relative;
         }
 
-        /* Preview Kotak Kecil Mini */
-        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; position: relative; }
+        /* Preview Kotak */
+        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; position: relative; overflow: hidden; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* Indikator Video */
@@ -81,6 +82,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 14px;
+            z-index: 2;
         }
 
         /* Komponen File Selain Gambar/Video */
@@ -101,17 +103,17 @@
 
     <div class="container">
         <header>
-            <h1>File Arsip Issuda xii.4</h1>
-            <p>By @binsik.exe</p>
+            <h1>FILE ARSIP XII4</h1>
+            <p>Arsip</p>
         </header>
 
-        <div id="loader" class="loading">Memuat data folder... ☕(mengirim data dari 📍 ungaran)</div>
+        <div id="loader" class="loading">Memuat data folder... ☕</div>
         <div id="treeContainer"></div>
     </div>
 
     <script>
         // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
-        const scriptUrl = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTarD_ZUOH7-J3elwqF7LRMu7U5R4_cSJV7NqZJQbsci32CXdzR_SctE1Pce6LUExk3Q4Z0e1HHHItxCFXWTe8kPnmCjSzWVf7b9t0onviXCovEw6Ve3pB7Y2CirXaLaqKo6WKyQ6P50EvCSX92qDYffmqdA4C4dy2OAPcyFT1H1UdClRLV0qtDsSWUoUqaidL3n7zMMyH1_kgMJ7LFdpZ9D2I1H9YVJ4yr50gMgFyOs0bJv-0VMklrOYvbxk3pVJO-NDSYiPwHjL7I6gLx0htJYhpT0A&lib=MrbdfUuDjhnYKq6NjtVxNcJANzck4hlvJ"; 
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbxG9vhtpRrFkeR7EgtW7odNcdh2TlxLfE9FZ55V05UuBvf0_F-rQy6xH02h_DQQIqBX/exec"; // <-- Ganti dengan URL asli Anda
 
         async function init() {
             try {
@@ -153,24 +155,24 @@
                     hasFiles = true;
                     const fileCard = document.createElement('a');
                     fileCard.className = 'file-card';
-                    
-                    // SEMUA DI-AKSES MELALUI LINK PUBLIK DIRECT (Bukan tampilan web Google Drive bawaan)
-                    // Menggunakan uc?export=view agar browser langsung membuka filenya mentah-mentah
-                    fileCard.href = "https://docs.google.com/uc?export=view&id=" + child.id;
                     fileCard.target = '_blank';
 
                     if (child.type === 'image') {
-                        // Kunci Kelancaran HP: Untuk preview halaman utama, kita batasi ukurannya hanya s150 (sangat ringan)
-                        const previewUrl = "https://lh3.googleusercontent.com/d/1TgWJYjMPzqadGK-NE1h361yNOJGsZ2sM4" + child.id + "=s150";
+                        // Tautan Foto: Membuka gambar mentah resolusi penuh di tab baru publik
+                        fileCard.href = "https://docs.google.com/uc?export=view&id=" + child.id;
+                        
+                        const previewUrl = "https://lh3.googleusercontent.com/d/" + child.id + "=s200";
                         fileCard.innerHTML = `
                             <div class="img-container">
-                                <img src="${previewUrl}" alt="${child.name}" loading="lazy">
+                                <img src="${previewUrl}" alt="${child.name}" loading="lazy" onerror="this.src='https://placehold.co/150x150/1e293b/ffffff?text=FOTO'">
                             </div>
                             <div class="file-info">${child.name.split('.')[0]}</div>
                         `;
                     } else if (child.type === 'video') {
-                        // Video diberikan thumbnail gambar statis ringan + lambang Play agar HP tidak lag meload video langsung
-                        const videoThumbUrl = "https://lh3.googleusercontent.com/d/1TgWJYjMPzqadGK-NE1h361yNOJGsZ2sM4" + child.id + "=s150";
+                        // PERBAIKAN UTAMA VIDEO: Menggunakan link /preview agar browser memutar video langsung secara online (Streaming) tanpa mendownload
+                        fileCard.href = "https://drive.google.com/file/d/" + child.id + "/preview";
+                        
+                        const videoThumbUrl = "https://lh3.googleusercontent.com/d/" + child.id + "=s200";
                         fileCard.innerHTML = `
                             <div class="img-container">
                                 <img src="${videoThumbUrl}" alt="${child.name}" loading="lazy" onerror="this.src='https://placehold.co/150x150/1e293b/ffffff?text=VIDEO'">
@@ -179,7 +181,8 @@
                             <div class="file-info">${child.name}</div>
                         `;
                     } else {
-                        // File dokumen lainnya
+                        // File dokumen lainnya seperti PDF
+                        fileCard.href = "https://docs.google.com/uc?export=view&id=" + child.id;
                         let icon = "📄";
                         if (child.type === 'pdf') icon = "📕";
                         fileCard.innerHTML = `
@@ -203,3 +206,4 @@
     </script>
 </body>
 </html>
+
