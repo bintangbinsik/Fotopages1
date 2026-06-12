@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistem Galeri Terstruktur</title>
+    <title>File arsip xii.4 by @binsik.exe</title>
     <style>
         :root {
             --background: #0f172a;
@@ -14,21 +14,23 @@
             --folder-color: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--background); color: var(--text); padding: 16px; min-height: 100vh; }
         .container { width: 100%; max-width: 800px; margin: 0 auto; }
         
         header { text-align: center; padding: 20px 0; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
-        header h1 { font-size: 24px; color: #818cf8; }
+        header h1 { font-size: 24px; color: #818cf8; font-weight: 700; }
+        header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
         
-        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; font-size: 14px; }
 
-        /* Gaya Struktur Pohon Folder */
-        .folder-node { margin-left: 15px; margin-top: 8px; }
+        /* Gaya Pohon Folder */
+        .folder-node { margin-left: 10px; margin-top: 10px; }
+        @media (min-width: 480px) { .folder-node { margin-left: 20px; } }
         
         .folder-header {
             background-color: var(--surface);
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-radius: 8px;
             border: 1px solid var(--border);
             cursor: pointer;
@@ -37,40 +39,49 @@
             align-items: center;
             gap: 10px;
             user-select: none;
+            transition: background 0.2s;
+            font-size: 14px;
         }
         
-        .folder-header::before { content: "📁"; color: var(--folder-color); }
+        .folder-header:hover { background-color: #243147; }
+        
+        .folder-header::before { content: "📁"; color: var(--folder-color); font-size: 16px; }
         .folder-node.open > .folder-header::before { content: "📂"; }
         
-        .folder-content { display: none; padding-left: 10px; border-left: 2px dashed var(--border); margin-top: 4px; }
+        .folder-content { display: none; padding-left: 10px; border-left: 2px dashed var(--border); margin-top: 6px; }
         .folder-node.open > .folder-content { display: block; }
 
-        /* Grid khusus untuk file di dalam folder */
+        /* Grid Komponen File */
         .file-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 8px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-top: 10px;
+            margin-bottom: 14px;
         }
         @media (min-width: 600px) { .file-grid { grid-template-columns: repeat(3, 1fr); } }
 
-        /* Kartu Elemen File */
         .file-card {
             background: #111827;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             text-decoration: none;
             color: inherit;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; }
+        .file-card:hover {
+            transform: translateY(-2px);
+            border-color: #6366f1;
+        }
+
+        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; overflow: hidden; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Tampilan untuk file Non-Gambar (PDF, dll) */
+        /* File Non-Gambar */
         .non-img-container {
             width: 100%;
             aspect-ratio: 1/1;
@@ -79,19 +90,19 @@
             align-items: center;
             justify-content: center;
             background: #1e293b;
-            font-size: 32px;
+            font-size: 36px;
         }
-        .non-img-label { font-size: 11px; color: var(--text-muted); margin-top: 5px; font-weight: bold; text-transform: uppercase; }
+        .non-img-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .file-info { padding: 8px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+        .file-info { padding: 10px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-weight: 500; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>SISTEM FILE & FOLDER KELAS</h1>
-            <p>Klik pada folder untuk membuka atau menutup isinya</p>
+            <h1>ARSIP FOLDER FOTO XII.4</h1>
+            <p>Menampilkan seluruh file dan sub-file</p>
         </header>
 
         <div id="loader" class="loading">Sedang memetakan seluruh struktur folder... Mohon tunggu ☕</div>
@@ -100,5 +111,98 @@
     </div>
 
     <script>
-        // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT YANG BARU DI SINI
+        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA YANG BERAKHIRAN /exec DI SINI
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbxG9vhtpRrFkeR7EgtW7odNcdh2TlxLfE9FZ55V05UuBvf0_F-rQy6xH02h_DQQIqBX/exec"; // <-- Ganti ini dengan URL asli Anda
 
+        async function init() {
+            try {
+                const response = await fetch(scriptUrl);
+                const data = await response.json();
+                
+                // Sembunyikan loading jika data sukses diambil
+                document.getElementById('loader').style.display = 'none';
+                
+                const container = document.getElementById('treeContainer');
+                container.appendChild(buildTreeDOM(data));
+            } catch (err) {
+                document.getElementById('loader').innerText = "Gagal memuat struktur data folder. Coba periksa kembali URL Web App Anda.";
+                console.error(err);
+            }
+        }
+
+        function buildTreeDOM(node) {
+            const folderDiv = document.createElement('div');
+            folderDiv.className = 'folder-node';
+            
+            // Membuat Bar Elemen Folder Utama
+            const header = document.createElement('div');
+            header.className = 'folder-header';
+            header.innerText = node.name;
+            header.onclick = (e) => {
+                e.stopPropagation();
+                folderDiv.classList.toggle('open');
+            };
+            folderDiv.appendChild(header);
+            
+            // Wadah Untuk Menampung File dan Sub-Folder di dalamnya
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'folder-content';
+            
+            const fileGrid = document.createElement('div');
+            fileGrid.className = 'file-grid';
+            
+            let hasFiles = false;
+
+            // Memproses Seluruh Isi di dalam Folder Ini
+            node.children.forEach(child => {
+                if (child.type === 'folder') {
+                    // Jika ada folder di dalam folder, panggil kembali fungsi ini (Sistem Rekursif)
+                    contentDiv.appendChild(buildTreeDOM(child));
+                } else {
+                    hasFiles = true;
+                    const fileCard = document.createElement('a');
+                    fileCard.className = 'file-card';
+                    fileCard.href = "https://drive.google.com/open?id=" + child.id;
+                    fileCard.target = '_blank';
+
+                    if (child.type === 'image') {
+                        // Perbaikan Sintaks Gambar Aman (=s0 untuk Kualitas Asli Kamera Tanpa Kompresi)
+                        const directImgUrl = "https://lh3.googleusercontent.com/d/" + child.id + "=s0";
+                        fileCard.innerHTML = `
+                            <div class="img-container">
+                                <img src="${directImgUrl}" alt="${child.name}" onerror="this.src='https://placehold.co/400x400/1e293b/ffffff?text=IMG'">
+                            </div>
+                            <div class="file-info">${child.name.split('.')[0]}</div>
+                        `;
+                    } else {
+                        // Desain Khusus File Selain Gambar (PDF, Video, dll)
+                        let icon = "📄";
+                        let label = "Berkas";
+                        if (child.type === 'pdf') { icon = "📕"; label = "PDF"; }
+                        if (child.type === 'video') { icon = "🎬"; label = "Video"; }
+                        
+                        fileCard.innerHTML = `
+                            <div class="non-img-container">
+                                <div>${icon}</div>
+                                <div class="non-img-label">${label}</div>
+                            </div>
+                            <div class="file-info">${child.name}</div>
+                        `;
+                    }
+                    fileGrid.appendChild(fileCard);
+                }
+            });
+
+            if (hasFiles) {
+                contentDiv.insertBefore(fileGrid, contentDiv.firstChild);
+            }
+            
+            folderDiv.appendChild(contentDiv);
+            return folderDiv;
+        }
+
+        // Mulai Menjalankan Script Saat Web Dibuka
+        init();
+    </script>
+</body>
+</html>
